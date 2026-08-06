@@ -1,0 +1,46 @@
+[17:00:21.215] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.001, batch_size=24, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Patches_refinement', deterministic=1, eval=False, img_size=224, list_dir='./lists/list_patches', max_epochs=600, max_iterations=30000, n_gpu=1, num_classes=3, opts=None, output_dir='./model_out20260730', resume=None, root_path='datasets/New_patches_datasets_20250525', save_interval=10, seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[17:28:07.431] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.001, batch_size=24, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Patches_refinement', deterministic=1, eval=False, img_size=224, list_dir='./lists/list_patches', max_epochs=600, max_iterations=30000, n_gpu=1, num_classes=3, opts=None, output_dir='./model_out20260730', resume=None, root_path='datasets/New_patches_datasets_20250525', save_interval=10, seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[17:28:07.537] 230 iterations per epoch. 138000 max iterations 
+[18:13:56.495] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.001, batch_size=24, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Patches_refinement', deterministic=1, eval=False, img_size=224, list_dir='./lists/list_patches', max_epochs=600, max_iterations=30000, n_gpu=1, num_classes=3, opts=None, output_dir='./model_out20260730', resume=None, root_path='datasets/New_patches_datasets_20250525', save_interval=10, seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[18:13:56.580] 230 iterations per epoch. 138000 max iterations 
+[18:19:52.346] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.001, batch_size=24, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Patches_refinement', deterministic=1, eval=False, img_size=224, list_dir='./lists/list_patches', max_epochs=600, max_iterations=30000, n_gpu=1, num_classes=3, opts=None, output_dir='./model_out20260730', resume=None, root_path='datasets/New_patches_datasets_20250525', save_interval=10, seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[18:19:52.409] 230 iterations per epoch. 138000 max iterations 
+[18:19:56.138] iteration 1 : loss : 0.951015, loss_ce: 1.219081
+[18:19:56.318] iteration 2 : loss : 0.939505, loss_ce: 1.212761
+[18:19:56.488] iteration 3 : loss : 0.921891, loss_ce: 1.207974
+[18:19:56.653] iteration 4 : loss : 0.931796, loss_ce: 1.189047
+[18:19:56.820] iteration 5 : loss : 0.926889, loss_ce: 1.175952
+[18:19:56.988] iteration 6 : loss : 0.907257, loss_ce: 1.163022
+[18:19:57.151] iteration 7 : loss : 0.903303, loss_ce: 1.138344
+[18:19:57.340] iteration 8 : loss : 0.883199, loss_ce: 1.124198
+[18:19:57.948] iteration 9 : loss : 0.872621, loss_ce: 1.099208
+[18:19:58.115] iteration 10 : loss : 0.858187, loss_ce: 1.081377
+[18:19:58.279] iteration 11 : loss : 0.852731, loss_ce: 1.056511
+[18:19:58.442] iteration 12 : loss : 0.842150, loss_ce: 1.037194
+[18:19:58.606] iteration 13 : loss : 0.830385, loss_ce: 1.018710
+[18:19:58.771] iteration 14 : loss : 0.823845, loss_ce: 1.017550
+[18:19:58.936] iteration 15 : loss : 0.807686, loss_ce: 0.975992
+[23:12:07.503] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.001, batch_size=24, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', dataset='Patches_refinement', deterministic=1, eval=False, img_size=224, list_dir='./lists/list_patches', max_epochs=600, max_iterations=30000, n_gpu=1, num_classes=3, opts=None, output_dir='./model_out20260730', resume=None, root_path='datasets/New_patches_datasets_20250525', save_interval=10, seed=1234, tag=None, throughput=False, use_checkpoint=False, zip=False)
+[23:12:07.560] 230 iterations per epoch. 138000 max iterations 
+[23:12:10.429] iteration 1 : loss : 0.942285, loss_ce: 1.207774
+[23:12:10.614] iteration 2 : loss : 0.931494, loss_ce: 1.202457
+[23:12:10.787] iteration 3 : loss : 0.915098, loss_ce: 1.198404
+[23:12:10.981] iteration 4 : loss : 0.921848, loss_ce: 1.174527
+[23:12:11.148] iteration 5 : loss : 0.918101, loss_ce: 1.163760
+[23:12:11.315] iteration 6 : loss : 0.900276, loss_ce: 1.153657
+[23:12:11.479] iteration 7 : loss : 0.894492, loss_ce: 1.125106
+[23:12:11.645] iteration 8 : loss : 0.878092, loss_ce: 1.115838
+[23:12:12.728] iteration 9 : loss : 0.865366, loss_ce: 1.087572
+[23:12:12.897] iteration 10 : loss : 0.850664, loss_ce: 1.069877
+[23:12:13.061] iteration 11 : loss : 0.844233, loss_ce: 1.042991
+[23:12:13.227] iteration 12 : loss : 0.834794, loss_ce: 1.025385
+[23:12:13.394] iteration 13 : loss : 0.822039, loss_ce: 1.004877
+[23:12:13.802] iteration 14 : loss : 0.815340, loss_ce: 1.003896
+[23:12:13.973] iteration 15 : loss : 0.799931, loss_ce: 0.963169
+[23:12:14.154] iteration 16 : loss : 0.793694, loss_ce: 0.957386
+[23:12:14.766] iteration 17 : loss : 0.784728, loss_ce: 0.936541
+[23:12:14.930] iteration 18 : loss : 0.769755, loss_ce: 0.926628
+[23:12:15.097] iteration 19 : loss : 0.768902, loss_ce: 0.912492
+[23:12:15.264] iteration 20 : loss : 0.769343, loss_ce: 0.896766
+[23:12:15.490] iteration 21 : loss : 0.753826, loss_ce: 0.893425
+[23:12:16.146] iteration 22 : loss : 0.737222, loss_ce: 0.874362

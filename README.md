@@ -1,24 +1,3 @@
-<img
-  src="./docs/images/Picture1.png"
-  align="right"
-  width="350"
-  alt="Multi-dimensional organoid phenotype analysis platform"
-/>
-
-### Multi-dimensional organoid phenotype analysis platform
-
-AI-powered organoid analysis platform integrating
-z-stack projection, fluorescence quantification,
-instance segmentation, and viability assessment.
-
-[Documentation](链接) |
-[Datasets](链接) |
-[Paper](链接)
-
-<br clear="right"/>
-
----
-
 <h1 align="center">Morphi</h1>
 
 <p align="center">
@@ -27,12 +6,12 @@ instance segmentation, and viability assessment.
 </p>
 
 <p align="center">
-  <strong>Official implementation of “PAPER TITLE”</strong>
+  <strong>Official implementation of “AI-driven phenotypic profiling of organoids in droplet culture”</strong>
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.10-blue" alt="Python">
-  <img src="https://img.shields.io/badge/PyTorch-X.X.X-orange" alt="PyTorch">
+  <img src="https://img.shields.io/badge/PyTorch-2.2.2-orange" alt="PyTorch">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="License">
   <img src="https://img.shields.io/badge/Paper-Under%20Review-lightgrey" alt="Paper Status">
 </p>
@@ -66,14 +45,14 @@ instance segmentation, and viability assessment.
 <p align="center">
   <code>
     R<sub>death</sub> =
-    |M<sub>organoid</sub> ∩ M<sub>PI</sub>| /
+    |M<sub>organoid</sub> ∩ M<sub>Dead</sub>| /
     |M<sub>organoid</sub>|
   </code>
 </p>
 
 <p>
   where <code>M<sub>organoid</sub></code> denotes the predicted organoid mask,
-  and <code>M<sub>PI</sub></code> denotes the predicted PI-positive mask.
+  and <code>M<sub>Dead</sub></code> denotes the predicted Dead-region mask.
 </p>
 
 <h2>Workflow</h2>
