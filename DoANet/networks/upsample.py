@@ -23,7 +23,7 @@ class finalExpand_featuremap(nn.Module):
         self.dim_scale = dim_scale
         self.out_dim = out_dim or dim
 
-        # 每个 token 展开成 dim_scale × dim_scale 个空间位置
+        # Each token expands into dim_scale × dim_scale spatial locations
         self.expand = nn.Linear(
             dim,
             (dim_scale ** 2) * self.out_dim,
@@ -63,7 +63,7 @@ class finalExpand_featuremap(nn.Module):
             (self.dim_scale ** 2) * self.out_dim,
         )
 
-        # PixelShuffle 式空间重排
+        # Pixelshuffle-style spatial rearrangement
         # -> [B, H*scale, W*scale, out_dim]
         x = rearrange(
             x,
@@ -117,8 +117,7 @@ class PatchExpanding(nn.Module):
         self.dim = int(dim)
         self.dim_scale = int(dim_scale)
 
-        # Swin-Unet 的标准 PatchExpand:
-        # scale=2 时，输出通道从 C 降为 C/2。
+        # For scale=2, the output channel drops from C to C/2
         if self.dim % self.dim_scale != 0:
             raise ValueError(
                 f"dim={self.dim} must be divisible by "
@@ -127,18 +126,15 @@ class PatchExpanding(nn.Module):
 
         self.output_dim = self.dim // self.dim_scale
 
-        # PixelShuffle 要求输入通道数为:
-        # output_dim * scale_factor^2
+        # The required number of input channels is: output_dim * scale_factor^2
         expanded_dim = (
             self.output_dim
             * self.dim_scale
             * self.dim_scale
         )
 
-        # scale=2 时:
+        # when scale=2
         # expanded_dim = C/2 * 4 = 2C
-        #
-        # 与原始实现 nn.Linear(C, 2*C) 完全一致。
         self.expand = nn.Linear(
             self.dim,
             expanded_dim,
