@@ -1,3 +1,9 @@
+# --------------------------------------------------------
+# Copied from TransUNet:
+# https://github.com/Beckschen/TransUNet/blob/main/datasets/dataset_synapse.py
+# Licensed under the Apache License, Version 2.0.
+# --------------------------------------------------------
+
 import os
 import random
 import h5py

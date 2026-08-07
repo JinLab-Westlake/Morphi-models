@@ -64,17 +64,17 @@ class Synapse_dataset(Dataset):
     def __getitem__(self, idx):
         slice_name = self.sample_list[idx].strip('\n')
         
-        # # 构建原图和标签图像的路径
+        # Build paths for the original and label images
         image_path = os.path.join(self.data_dir, 'images', slice_name)
         label_path = os.path.join(self.data_dir, 'labels', slice_name)
         
         
         
-        # 读取图像
+        # read image
         image = Image.open(image_path).convert('L')
-        label = Image.open(label_path).convert('L')  # 标签通常为灰度图
+        label = Image.open(label_path).convert('L')  # Labels are usually grayscale images
 
-        # 转换为numpy数组
+        # transfer to numpy array
         image = np.array(image)
         label = np.array(label)
 
