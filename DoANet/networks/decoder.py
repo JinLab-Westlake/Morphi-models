@@ -1,10 +1,7 @@
 import torch
 import torch.nn as nn
-import torch.utils.checkpoint as checkpoint
-from einops import rearrange
-from timm.models.layers import DropPath, to_2tuple, trunc_normal_
 from typing import List, Sequence, Tuple
-from .upsample import PatchExpand, BasicLayer_up,finalExpand_featuremap
+from .upsample import PatchExpanding, BasicLayer_decoder,finalExpand_featuremap
 
 
 class SwinDecoder(nn.Module):
@@ -88,7 +85,7 @@ class SwinDecoder(nn.Module):
             if decoder_index == 0:
                 concat_projection = nn.Identity()
 
-                layer_up = PatchExpand(
+                layer_up = PatchExpanding(
                     input_resolution=stage_resolution,
                     dim=stage_dim,
                     dim_scale=2,
@@ -108,7 +105,7 @@ class SwinDecoder(nn.Module):
                     depths[:encoder_stage_index + 1]
                 )
 
-                layer_up = BasicLayer_up(
+                layer_up = BasicLayer_decoder(
                     dim=stage_dim,
                     input_resolution=stage_resolution,
                     depth=depths[encoder_stage_index],
@@ -126,7 +123,7 @@ class SwinDecoder(nn.Module):
                     ],
                     norm_layer=norm_layer,
                     upsample=(
-                        PatchExpand
+                        PatchExpanding
                         if decoder_index
                         < self.num_layers - 1
                         else None

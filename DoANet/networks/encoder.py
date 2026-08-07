@@ -1,10 +1,8 @@
 import torch
 import torch.nn as nn
-import torch.utils.checkpoint as checkpoint
-from einops import rearrange
-from timm.models.layers import DropPath, to_2tuple, trunc_normal_
 from typing import List, Sequence, Tuple
 from .swin_transformer_block import PatchEmbed,BasicLayer,PatchMerging
+
 
 
 
