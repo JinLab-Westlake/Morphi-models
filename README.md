@@ -29,7 +29,7 @@
 <h2>Installation</h2>
 
 <pre><code>git clone https://github.com/JinLab-Westlake/Morphi-models.git
-cd Morphi
+cd Morphi-models
 
 chmod +x install.sh
 bash install.sh
@@ -43,11 +43,12 @@ conda activate morphi
 
 <p>Download the pretrained checkpoints and place them under:</p>
 
-<pre><code>checkpoints/
-├── doanet/
-│   └── &lt;DOANET_CHECKPOINT&gt;.pth
-└── instance/
-    └── &lt;INSTANCE_CHECKPOINT&gt;.pth
+<pre><code>Morphi/
+└──checkpoints/
+    ├── doanet/
+    │   └── DoA.pth
+    └── instance/
+        └── Organoid-seg.pth
 </code></pre>
 
 <p>Download:</p>
@@ -58,9 +59,10 @@ conda activate morphi
 
 <p>Morphi accepts bright-field organoid images.</p>
 
-<pre><code>example/
-└── input/
-    └── example.png
+<pre><code>docs/
+└──example/
+    └── input/
+        └── example.png
 </code></pre>
 
 <p>
@@ -75,30 +77,29 @@ semantic mask.
 
 <h2>Output</h2>
 
-<pre><code>pipeline_results/
-└── example/
-    ├── example_semantic.png
-    ├── instance_mask/
-    │   └── example_instance_label.tif
-    ├── overlay/
-    │   └── example.png
-    └── instance_death_rate.xlsx
+<pre><code>Morphi/
+└──pipeline_results/
+    └── example/
+        ├── example_semantic.png
+        ├── instance_mask/
+        │   └── example_instance_label.tif
+        ├── overlay/
+        │   └── example.png
+        └── instance_death_rate.xlsx
 </code></pre>
 
 
 <p>
 Each organoid receives a unique integer ID in the instance mask.
-The death-rate table contains:
+The death-rate table example:
 </p>
 
-<pre><code>image_name
-instance_id
-instance_area
-live_pixels
-dead_pixels
-overlap_pixels
-death_rate
-</code></pre>
+<table>
+<tr><th>image_name</th><th>instance_id</th><th>instance_area</th><th>dead_pixels</th><th>death_rate</th></tr>
+<tr><td>Image.tiff</td><td>1</td><td>10572</td><td>27</td><td>0.25</td></tr>
+<tr><td>Image.tiff</td><td>2</td><td>2050</td><td>2015</td><td>97.29</td></tr>
+<tr><td>Image.tiff</td><td>3</td><td>3654</td><td>291</td><td>7.96</td></tr>
+</table>
 
 <h2>Run DoANet Only</h2>
 
@@ -117,9 +118,9 @@ death_rate
 
 <p>
 The experimental environment is provided in
-<code>env/environment.yaml</code>.
+<code>Morphi/env/environment.yaml</code>.
 The Detectron2 source used for the experiments is bundled in
-<code>env/detectron2/</code>.
+<code>Morphi/env/detectron2/</code>.
 </p>
 
 

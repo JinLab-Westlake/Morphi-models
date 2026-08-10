@@ -13,8 +13,21 @@ from detectron2.data import MetadataCatalog
 from detectron2.engine.defaults import DefaultPredictor
 from detectron2.utils.visualizer import ColorMode, Visualizer
 
+CURRENT_FILE = os.path.abspath(__file__)
 
-from ...swinb.config import add_swinb_config
+INSTANCE_ROOT = os.path.abspath(
+    os.path.join(
+        os.path.dirname(CURRENT_FILE),
+        "..",
+        ".."
+    )
+)
+
+if INSTANCE_ROOT not in sys.path:
+    sys.path.insert(0, INSTANCE_ROOT)
+
+from swinb.config import add_swinb_config
+
 
 
 class VisualizationDemo:
@@ -212,31 +225,31 @@ def process_one_case(input_folder, output_folder, semantic_mask_folder, demo):
 
             for idx, (m, score, box) in enumerate(zip(masks, scores, boxes), start=1):
                 x1, y1, x2, y2 = box.tolist()
-
+                instance_area = int(np.sum(m))
                 if semantic_mask is not None:
                     live_overlap = m & (semantic_mask == 127)
                     dead_overlap = m & (semantic_mask == 254)
                     live_pixels = int(np.sum(live_overlap))
                     dead_pixels = int(np.sum(dead_overlap))
                     overlap_pixels = live_pixels + dead_pixels
-                    death_rate = dead_pixels / overlap_pixels if overlap_pixels > 0 else np.nan
+                    death_rate = (dead_pixels / instance_area)*100 if overlap_pixels > 0 else np.nan
                 else:
                     live_overlap = None
                     dead_overlap = None
                     live_pixels = 0
                     dead_pixels = 0
-                    overlap_pixels = 0
+                    # overlap_pixels = 0
                     death_rate = np.nan
 
-                instance_area = int(np.sum(m))
+
 
                 results.append({
                     "image_name": filename,
                     "instance_id": idx,
                     "instance_area": instance_area,
-                    "live_pixels": live_pixels,
+                    # "live_pixels": live_pixels,
                     "dead_pixels": dead_pixels,
-                    "overlap_pixels": overlap_pixels,
+                    # "overlap_pixels": overlap_pixels,
                     "death_rate": death_rate
                 })
 
@@ -281,8 +294,8 @@ def process_one_case(input_folder, output_folder, semantic_mask_folder, demo):
 
         for ann in overlay_annotations:
             x1, y1 = ann["x1"], ann["y1"]
-            live_pixels = ann["live_pixels"]
-            dead_pixels = ann["dead_pixels"]
+            # live_pixels = ann["live_pixels"]
+            # dead_pixels = ann["dead_pixels"]
             death_rate = ann["death_rate"]
             instance_id = ann["instance_id"]
 
@@ -352,28 +365,34 @@ def batch_process(root_a, root_b, demo):
 
 
 def main():
-    root_a_default = "/storage/jinxinLab/wangyimin/Cell_seg/Datasets/20240928"
-    root_b_default = "/storage/jinxinLab/wangyimin/Cell_seg/Swin-Unet-main/model_out20260211_padding/20260630"
+    if len(sys.argv) < 5:
+        print(
+            "Usage: python inference_with_LIVE_MODEL.py "
+            "<root_a> <root_b> <config.yaml> <model.pth>"
+        )
+        sys.exit(1)
 
-    root_a = sys.argv[1] if len(sys.argv) > 1 else root_a_default
-    root_b = sys.argv[2] if len(sys.argv) > 2 else root_b_default
+    root_a = sys.argv[1]
+    root_b = sys.argv[2]
+    config_path = sys.argv[3]
+    weights_path = sys.argv[4]
 
     print(f"root_a: {root_a}")
     print(f"root_b: {root_b}")
+    print(f"config: {config_path}")
+    print(f"weights: {weights_path}")
 
     cfg = get_cfg()
     add_swinb_config(cfg)
-    cfg.merge_from_file(
-        "/storage/jinxinLab/wangyimin/Cell_seg/transfiner-main/output_swin_B_3x_finetune_organoids_AO_WITH_loop_focus/config.yaml"
-    )
-    cfg.MODEL.WEIGHTS = (
-        "/storage/jinxinLab/wangyimin/Cell_seg/transfiner-main/"
-        "output_swin_B_3x_finetune_organoids_AO_WITH_loop_focus/model_0001049.pth"
-    )
+    cfg.merge_from_file(config_path)
+    cfg.MODEL.WEIGHTS = weights_path
     cfg.MODEL.DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
     cfg.freeze()
 
-    demo = VisualizationDemo(cfg, instance_mode=ColorMode.IMAGE)
+    demo = VisualizationDemo(
+        cfg,
+        instance_mode=ColorMode.IMAGE
+    )
 
     batch_process(root_a, root_b, demo)
 
