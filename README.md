@@ -1,8 +1,7 @@
 <h1 align="center">Morphi</h1>
 
 <p align="center">
-  A computational framework for organoid instance segmentation,<br>
-  PI-positive region segmentation, and organoid-level death-ratio quantification.
+  A computational framework for organoid multi-dimensions analysis.<br>
 </p>
 
 <p align="center">
@@ -12,7 +11,8 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.10-blue" alt="Python">
   <img src="https://img.shields.io/badge/PyTorch-2.2.2-orange" alt="PyTorch">
-  <img src="https://img.shields.io/badge/License-MIT-green" alt="License">
+
+[//]: # (  <img src="https://img.shields.io/badge/License-MIT-green" alt="License">)
   <img src="https://img.shields.io/badge/Paper-Under%20Review-lightgrey" alt="Paper Status">
 </p>
 
@@ -20,10 +20,21 @@
 <h2>Overview</h2>
 
 <ul>
+  <li><strong>Z-stack projection</strong></li>
+  <li><strong>Fluorescent-signal capture</strong></li>
   <li><strong>DoANet</strong>: semantic segmentation of live/dead regions.</li>
   <li><strong>Instance segmentation</strong>: organoid detection and segmentation using Detectron2.</li>
   <li><strong>Death-rate analysis</strong>: combines semantic and instance masks to calculate the death rate of each organoid.</li>
+  <li><strong>Feature extraction</strong>: morphological and texture features are extracted.</li>
 </ul>
+
+<pre><code>Morphi/
+├── Z-stack_projection/  # multi-layer projection
+├── Edge-detection/      # fluorescence detection
+├── DoANet/              # viability analysis
+├── Instance-segment/    # organoid instance segmentation
+└── scripts/             # pipeline and mask conversion
+</code></pre>
 
 
 <h2>Installation</h2>
@@ -101,8 +112,27 @@ The death-rate table example:
 <tr><td>Image.tiff</td><td>3</td><td>3654</td><td>291</td><td>7.96</td></tr>
 </table>
 
-<h2>Run DoANet Only</h2>
 
+<h2>Feature extraction</h2>
+<pre><code>cd Morphi/Instance-segment/Feature_analysis
+</code></pre>
+
+<p>
+Usage:
+</p>
+<pre>
+<code>python info_extract_instance.py \
+    --pairs_csv /path/to/pairs.csv \
+    --out_csv   /path/to/features.csv \
+    [--out_xlsx /path/to/features.xlsx] \
+    [--pixel_size 0.5] \
+    [--glcm_dist 1 2] \
+    [--glcm_angles 0 0.78539816339 1.57079632679 2.35619449019] \
+    [--glcm_levels 64]</code>
+</pre>
+
+
+<h2>Run DoANet Only</h2>
 <pre><code>python DoANet/inference_full_image.py \
     --image_path &lt;INPUT_IMAGE&gt; \
     --checkpoint &lt;DOANET_CHECKPOINT&gt; \

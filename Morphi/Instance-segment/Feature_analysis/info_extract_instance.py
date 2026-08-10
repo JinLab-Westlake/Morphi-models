@@ -5,7 +5,7 @@ Input CSV (from pairing step) must have columns:
   drugname, plate, token, row, col, folder_name, brightfield_path, mask_path
 
 Usage:
-  python run_feature_extract.py \
+  python info_extract_instance \
     --pairs_csv /path/to/pairs.csv \
     --out_csv   /path/to/features.csv \
     [--out_xlsx /path/to/features.xlsx] \
