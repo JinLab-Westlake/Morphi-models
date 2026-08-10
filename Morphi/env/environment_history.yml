@@ -13,4 +13,3 @@ dependencies:
   - faiss-gpu
   - matplotlib
   - pyg
-prefix: /home/jinxinLab/wangyimin/anaconda3/envs/Jupyter

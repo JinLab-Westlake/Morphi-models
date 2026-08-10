@@ -415,4 +415,4 @@ dependencies:
       - yacs==0.1.8
       - yarl==1.9.4
       - zope-interface==7.1.1
-prefix: /home/jinxinLab/wangyimin/anaconda3/envs/Jupyter
+
