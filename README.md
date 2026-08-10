@@ -71,7 +71,7 @@ semantic mask.
 
 <h2>Run the Pipeline</h2>
 
-<pre><code>bash pipeline/run_full_pipeline.sh</code></pre>
+<pre><code>bash scripts/run_full_pipeline.sh</code></pre>
 
 <h2>Output</h2>
 
