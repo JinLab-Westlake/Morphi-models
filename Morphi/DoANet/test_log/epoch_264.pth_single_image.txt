@@ -1,0 +1,46 @@
+[16:01:12.649] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.01, batch_size=1, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', checkpoint='/storage/jinxinLab/wangyimin/Cell_seg/Swin-Unet-main/model_out20260730/epoch_264.pth', dataset='Organoids', death_prob_is_logits=False, deterministic=1, eval=False, image_path='/storage/jinxinLab/wangyimin/Cell_seg/Datasets/20240928/20240926_a2780_post_drug__2024-09-26T22_59_12-Measurement/channel/BF/r14c19f01.tiff', img_size=224, is_pretrain=True, list_dir='', max_epochs=150, max_iterations=30000, num_classes=3, opts=None, output_dir='/storage/jinxinLab/wangyimin/Cell_seg/Swin-Unet-main/model_out20260730', resume=None, seed=1234, stride=224, tag=None, test_save_dir='/storage/jinxinLab/wangyimin/Cell_seg/Morphi-models/pipeline_tmp/doanet', throughput=False, use_checkpoint=False, volume_path='', zip=False)
+[16:01:12.650] Checkpoint: /storage/jinxinLab/wangyimin/Cell_seg/Swin-Unet-main/model_out20260730/epoch_264.pth
+[16:01:12.650] Save directory: /storage/jinxinLab/wangyimin/Cell_seg/Morphi-models/pipeline_tmp/doanet/r14c19f01
+[16:01:12.902] Image: r14c19f01
+[16:01:12.902] Original size: H=1080, W=1080
+[16:01:12.903] Patch size: 224
+[16:01:12.903] Stride: 224
+[16:01:12.903] Total patches: 25
+[16:01:13.331] All pixels covered.
+[16:01:13.331] Coverage count range: 1.0 ~ 4.0
+[16:01:13.356] Final prediction shape: (1080, 1080)
+[16:01:14.074] Inference completed: r14c19f01
+[16:01:14.074] Saved to: /storage/jinxinLab/wangyimin/Cell_seg/Morphi-models/pipeline_tmp/doanet/r14c19f01
+[16:01:14.075] Inference Finished!
+[16:07:59.097] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.01, batch_size=1, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', checkpoint='/storage/jinxinLab/wangyimin/Cell_seg/Swin-Unet-main/model_out20260730/epoch_264.pth', dataset='Organoids', death_prob_is_logits=False, deterministic=1, eval=False, image_path='/storage/jinxinLab/wangyimin/Cell_seg/Datasets/20240928/20240926_a2780_post_drug__2024-09-26T22_59_12-Measurement/channel/BF/r14c19f01.tiff', img_size=224, is_pretrain=True, list_dir='', max_epochs=150, max_iterations=30000, num_classes=3, opts=None, output_dir='/storage/jinxinLab/wangyimin/Cell_seg/Swin-Unet-main/model_out20260730', resume=None, seed=1234, stride=224, tag=None, test_save_dir='/storage/jinxinLab/wangyimin/Cell_seg/Morphi-models/pipeline_tmp/doanet', throughput=False, use_checkpoint=False, volume_path='', zip=False)
+[16:07:59.097] Checkpoint: /storage/jinxinLab/wangyimin/Cell_seg/Swin-Unet-main/model_out20260730/epoch_264.pth
+[16:07:59.098] Save directory: /storage/jinxinLab/wangyimin/Cell_seg/Morphi-models/pipeline_tmp/doanet/r14c19f01
+[16:07:59.246] Image: r14c19f01
+[16:07:59.246] Original size: H=1080, W=1080
+[16:07:59.246] Patch size: 224
+[16:07:59.246] Stride: 224
+[16:07:59.246] Total patches: 25
+[16:07:59.709] All pixels covered.
+[16:07:59.710] Coverage count range: 1.0 ~ 4.0
+[16:07:59.734] Final prediction shape: (1080, 1080)
+[16:08:00.410] Inference completed: r14c19f01
+[16:08:00.410] Saved to: /storage/jinxinLab/wangyimin/Cell_seg/Morphi-models/pipeline_tmp/doanet/r14c19f01
+[16:08:00.410] Inference Finished!
+[16:14:00.350] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.01, batch_size=1, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', checkpoint='/storage/jinxinLab/wangyimin/Cell_seg/Swin-Unet-main/model_out20260730/epoch_264.pth', dataset='Organoids', death_prob_is_logits=False, deterministic=1, eval=False, image_path='/storage/jinxinLab/wangyimin/Cell_seg/Datasets/20240928/20240926_a2780_post_drug__2024-09-26T22_59_12-Measurement/channel/BF/r14c19f01.tiff', img_size=224, is_pretrain=True, list_dir='', max_epochs=150, max_iterations=30000, num_classes=3, opts=None, output_dir='/storage/jinxinLab/wangyimin/Cell_seg/Swin-Unet-main/model_out20260730', resume=None, seed=1234, stride=224, tag=None, test_save_dir='/storage/jinxinLab/wangyimin/Cell_seg/Morphi-models/pipeline_tmp/doanet', throughput=False, use_checkpoint=False, volume_path='', zip=False)
+[16:14:00.350] Checkpoint: /storage/jinxinLab/wangyimin/Cell_seg/Swin-Unet-main/model_out20260730/epoch_264.pth
+[16:14:00.350] Save directory: /storage/jinxinLab/wangyimin/Cell_seg/Morphi-models/pipeline_tmp/doanet/r14c19f01
+[16:14:00.498] Image: r14c19f01
+[16:14:00.499] Original size: H=1080, W=1080
+[16:14:00.499] Patch size: 224
+[16:14:00.499] Stride: 224
+[16:14:00.499] Total patches: 25
+[16:14:00.982] All pixels covered.
+[16:14:00.983] Coverage count range: 1.0 ~ 4.0
+[16:14:01.023] Final prediction shape: (1080, 1080)
+[16:14:01.689] Inference completed: r14c19f01
+[16:14:01.689] Saved to: /storage/jinxinLab/wangyimin/Cell_seg/Morphi-models/pipeline_tmp/doanet/r14c19f01
+[16:14:01.690] Inference Finished!
+[16:21:18.326] Namespace(accumulation_steps=None, amp_opt_level='O1', base_lr=0.01, batch_size=1, cache_mode='part', cfg='configs/swin_tiny_patch4_window7_224_lite.yaml', checkpoint='/storage/jinxinLab/wangyimin/Cell_seg/Swin-Unet-main/model_out20260730/epoch_264.pth', dataset='Organoids', death_prob_is_logits=False, deterministic=1, eval=False, image_path='/storage/jinxinLab/wangyimin/Cell_seg/Datasets/20240928/20240926_a2780_post_drug__2024-09-26T22_59_12-Measurement/channel/BF/r14c19f01.tiff', img_size=224, is_pretrain=True, list_dir='', max_epochs=150, max_iterations=30000, num_classes=3, opts=None, output_dir='/storage/jinxinLab/wangyimin/Cell_seg/Swin-Unet-main/model_out20260730', resume=None, seed=1234, stride=224, tag=None, test_save_dir='/storage/jinxinLab/wangyimin/Cell_seg/Morphi-models/pipeline_tmp/doanet', throughput=False, use_checkpoint=False, volume_path='', zip=False)
+[16:21:18.326] Checkpoint: /storage/jinxinLab/wangyimin/Cell_seg/Swin-Unet-main/model_out20260730/epoch_264.pth
+[16:21:18.326] Save directory: /storage/jinxinLab/wangyimin/Cell_seg/Morphi-models/pipeline_tmp/doanet/r14c19f01
+[16:21:19.447] Inference Finished!

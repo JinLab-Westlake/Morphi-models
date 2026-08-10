@@ -1,0 +1,16 @@
+name: Jupyter
+channels:
+  - defaults
+dependencies:
+  - notebook
+  - python=3.8
+  - pytorch-cuda=12.1
+  - pytorch==2.2.2
+  - torchaudio==2.2.2
+  - torchvision==0.17.2
+  - pyyaml=5.4.1
+  - scikit-image
+  - faiss-gpu
+  - matplotlib
+  - pyg
+prefix: /home/jinxinLab/wangyimin/anaconda3/envs/Jupyter

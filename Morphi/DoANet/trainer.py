@@ -185,10 +185,10 @@ def trainer_patches_refinement(args, model, snapshot_path):
     #some geometric transformation
     data_transforms = transforms.Compose([
         ResizePadGenerator(output_size=[args.img_size, args.img_size]),
-        transforms.RandomHorizontalFlip(p=0.5),   # 50% prob horizontal flip
-        transforms.RandomVerticalFlip(p=0.5),     # 50% prob vertical flip
-        transforms.RandomRotation(degrees=45),    # Rotate randomly from -45 to 45 degrees
-        # Add color jitter
+        transforms.RandomHorizontalFlip(p=0.5),   # 50% 概率水平翻转
+        transforms.RandomVerticalFlip(p=0.5),     # 50% 概率垂直翻转
+        transforms.RandomRotation(degrees=45),    # 随机旋转 -45到45度
+        # 加入色彩抖动
         transforms.ColorJitter(brightness=0.1, contrast=0.1), 
         transforms.ToTensor(),
     ])
@@ -197,7 +197,8 @@ def trainer_patches_refinement(args, model, snapshot_path):
                                transform=transforms.Compose([
                                    ResizePadGenerator(output_size=[args.img_size, args.img_size])]))
     
-
+    
+    
 
     print("The length of train set is: {}".format(len(db_train)))
 
@@ -227,7 +228,7 @@ def trainer_patches_refinement(args, model, snapshot_path):
 
     for epoch_num in iterator:
         
-        # Branches join cutmix only for the first 100 epochs
+        # 只有前100个epoch加入cutmix
         cutmix_active = epoch_num < 100
         
         for i_batch, sampled_batch in enumerate(trainloader):
@@ -243,18 +244,18 @@ def trainer_patches_refinement(args, model, snapshot_path):
             """
             normal way
             """
-            # output logits + death_prob(two branch)
+            # 输出 logits + death_prob(两个分支)
             logits, death_prob = model(image_batch)
 
             # segmentation loss
             loss_ce = ce_loss(logits, label_batch.long())
             loss_dice = dice_loss(logits, label_batch, softmax=True)
 
-            # edge soft weight
-            soft_weight = generate_soft_weight_from_label(label_batch)
+            # 边界 soft weight
+            soft_weight = generate_soft_weight_from_label(label_batch)  # 封装函数
             loss_prob = F.mse_loss(death_prob, soft_weight)
 
-            # death boundary binary loss
+            # 死亡边界 binary loss
             with torch.no_grad():
                 boundary_mask = get_live_dead_soft_edge(label_batch).cuda()  
             prob = torch.softmax(logits, dim=1)

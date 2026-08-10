@@ -2,14 +2,14 @@
 if [ $epoch_time ];then
     EPOCH_TIME=$epoch_time
 else
-    EPOCH_TIME=235
+    EPOCH_TIME=295
 fi
 
 if [ $out_dir ]
 then
     OUT_DIR=$out_dir
 else
-    OUT_DIR='./model_out20260211_padding'
+    OUT_DIR='./model_out20260730'
 fi
 
 if [ $cfg ]

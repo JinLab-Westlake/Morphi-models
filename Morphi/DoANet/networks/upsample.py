@@ -3,86 +3,14 @@ import torch.nn as nn
 import torch.utils.checkpoint as checkpoint
 from einops import rearrange
 from .swin_transformer_block import SwinTransformerBlock
+
+
+
 import torch
 import torch.nn as nn
 
 
-class finalExpand_featuremap(nn.Module):
-    def __init__(
-            self,
-            input_resolution,
-            dim,
-            dim_scale=4,
-            out_dim=None,
-            norm_layer=nn.LayerNorm,
-    ):
-        super().__init__()
-
-        self.input_resolution = input_resolution
-        self.dim = dim
-        self.dim_scale = dim_scale
-        self.out_dim = out_dim or dim
-
-        # Each token expands into dim_scale × dim_scale spatial locations
-        self.expand = nn.Linear(
-            dim,
-            (dim_scale ** 2) * self.out_dim,
-            bias=False,
-        )
-
-        self.norm = norm_layer(self.out_dim)
-
-    def forward(self, x):
-        """
-        Args:
-            x: [B, H*W, dim]
-
-        Returns:
-            x: [B, out_dim, H*scale, W*scale]
-        """
-        H, W = self.input_resolution
-        B, L, C = x.shape
-
-        assert L == H * W, (
-            f"Token number {L} does not match "
-            f"input resolution {H}x{W}"
-        )
-        assert C == self.dim, (
-            f"Input channel {C} does not match dim={self.dim}"
-        )
-
-        # [B, H*W, dim]
-        # -> [B, H*W, scale²*out_dim]
-        x = self.expand(x)
-
-        # -> [B, H, W, scale²*out_dim]
-        x = x.view(
-            B,
-            H,
-            W,
-            (self.dim_scale ** 2) * self.out_dim,
-        )
-
-        # Pixelshuffle-style spatial rearrangement
-        # -> [B, H*scale, W*scale, out_dim]
-        x = rearrange(
-            x,
-            "b h w (p1 p2 c) -> b (h p1) (w p2) c",
-            p1=self.dim_scale,
-            p2=self.dim_scale,
-            c=self.out_dim,
-        )
-
-        x = self.norm(x)
-
-        # BHWC -> BCHW
-        x = x.permute(0, 3, 1, 2).contiguous()
-
-        return x
-
-
 class PatchExpanding(nn.Module):
-    # copy from
     """
     Token-space 2D pixel-shuffle upsampling.
 
@@ -117,7 +45,8 @@ class PatchExpanding(nn.Module):
         self.dim = int(dim)
         self.dim_scale = int(dim_scale)
 
-        # For scale=2, the output channel drops from C to C/2
+        # Swin-Unet 的标准 PatchExpand:
+        # scale=2 时，输出通道从 C 降为 C/2。
         if self.dim % self.dim_scale != 0:
             raise ValueError(
                 f"dim={self.dim} must be divisible by "
@@ -126,15 +55,18 @@ class PatchExpanding(nn.Module):
 
         self.output_dim = self.dim // self.dim_scale
 
-        # The required number of input channels is: output_dim * scale_factor^2
+        # PixelShuffle 要求输入通道数为:
+        # output_dim * scale_factor^2
         expanded_dim = (
             self.output_dim
             * self.dim_scale
             * self.dim_scale
         )
 
-        # when scale=2
+        # scale=2 时:
         # expanded_dim = C/2 * 4 = 2C
+        #
+        # 与原始实现 nn.Linear(C, 2*C) 完全一致。
         self.expand = nn.Linear(
             self.dim,
             expanded_dim,
@@ -232,6 +164,139 @@ class PatchExpanding(nn.Module):
         )
         
         
+
+class finalExpand_featuremap(nn.Module):
+    def __init__(
+        self,
+        input_resolution,
+        dim,
+        dim_scale=4,
+        out_dim=None,
+        norm_layer=nn.LayerNorm,
+    ):
+        super().__init__()
+
+        self.input_resolution = input_resolution
+        self.dim = dim
+        self.dim_scale = dim_scale
+        self.out_dim = out_dim or dim
+
+        # 每个 token 展开成 dim_scale × dim_scale 个空间位置
+        self.expand = nn.Linear(
+            dim,
+            (dim_scale ** 2) * self.out_dim,
+            bias=False,
+        )
+
+        self.norm = norm_layer(self.out_dim)
+
+    def forward(self, x):
+        """
+        Args:
+            x: [B, H*W, dim]
+
+        Returns:
+            x: [B, out_dim, H*scale, W*scale]
+        """
+        H, W = self.input_resolution
+        B, L, C = x.shape
+
+        assert L == H * W, (
+            f"Token number {L} does not match "
+            f"input resolution {H}x{W}"
+        )
+        assert C == self.dim, (
+            f"Input channel {C} does not match dim={self.dim}"
+        )
+
+        # [B, H*W, dim]
+        # -> [B, H*W, scale²*out_dim]
+        x = self.expand(x)
+
+        # -> [B, H, W, scale²*out_dim]
+        x = x.view(
+            B,
+            H,
+            W,
+            (self.dim_scale ** 2) * self.out_dim,
+        )
+
+        # PixelShuffle 式空间重排
+        # -> [B, H*scale, W*scale, out_dim]
+        x = rearrange(
+            x,
+            "b h w (p1 p2 c) -> b (h p1) (w p2) c",
+            p1=self.dim_scale,
+            p2=self.dim_scale,
+            c=self.out_dim,
+        )
+
+        x = self.norm(x)
+
+        # BHWC -> BCHW
+        x = x.permute(0, 3, 1, 2).contiguous()
+
+        return x
+    
+# #add
+# class BasicLayer_up(nn.Module):
+#     """ A basic Swin Transformer layer for one stage.
+
+#     Args:
+#         dim (int): Number of input channels.
+#         input_resolution (tuple[int]): Input resolution.
+#         depth (int): Number of blocks.
+#         num_heads (int): Number of attention heads.
+#         window_size (int): Local window size.
+#         mlp_ratio (float): Ratio of mlp hidden dim to embedding dim.
+#         qkv_bias (bool, optional): If True, add a learnable bias to query, key, value. Default: True
+#         qk_scale (float | None, optional): Override default qk scale of head_dim ** -0.5 if set.
+#         drop (float, optional): Dropout rate. Default: 0.0
+#         attn_drop (float, optional): Attention dropout rate. Default: 0.0
+#         drop_path (float | tuple[float], optional): Stochastic depth rate. Default: 0.0
+#         norm_layer (nn.Module, optional): Normalization layer. Default: nn.LayerNorm
+#         upsample (nn.Module | None, optional): upsample layer at the end of the layer. Default: None
+#         use_checkpoint (bool): Whether to use checkpointing to save memory. Default: False.
+#     """
+
+#     def __init__(self, dim, input_resolution, depth, num_heads, window_size,
+#                  mlp_ratio=4., qkv_bias=True, qk_scale=None, drop=0., attn_drop=0.,
+#                  drop_path=0., norm_layer=nn.LayerNorm, upsample=None, use_checkpoint=False):
+
+#         super().__init__()
+#         self.dim = dim
+#         self.input_resolution = input_resolution
+#         self.depth = depth
+#         self.use_checkpoint = use_checkpoint
+
+#         # build blocks
+#         self.blocks = nn.ModuleList([
+#             SwinTransformerBlock(dim=dim, input_resolution=input_resolution,
+#                                  num_heads=num_heads, window_size=window_size,
+#                                  shift_size=0 if (i % 2 == 0) else window_size // 2,
+#                                  mlp_ratio=mlp_ratio,
+#                                  qkv_bias=qkv_bias, qk_scale=qk_scale,
+#                                  drop=drop, attn_drop=attn_drop,
+#                                  drop_path=drop_path[i] if isinstance(drop_path, list) else drop_path,
+#                                  norm_layer=norm_layer)
+#             for i in range(depth)])
+
+#         # patch merging layer
+#         if upsample is not None:
+#             self.upsample = PatchExpand(input_resolution, dim=dim, dim_scale=2, norm_layer=norm_layer)
+#         else:
+#             self.upsample = None
+
+#     def forward(self, x):
+#         for blk in self.blocks:
+#             if self.use_checkpoint:
+#                 x = checkpoint.checkpoint(blk, x)
+#             else:
+#                 x = blk(x)
+#         if self.upsample is not None:
+#             x = self.upsample(x)
+#         return x
+
 
 
 class BasicLayer_decoder(nn.Module):
