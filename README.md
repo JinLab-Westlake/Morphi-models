@@ -28,7 +28,7 @@
 
 <h2>Installation</h2>
 
-<pre><code>git clone &lt;https://github.com/JinLab-Westlake/Morphi-models.git&gt;
+<pre><code>git clone https://github.com/JinLab-Westlake/Morphi-models.git
 cd Morphi
 
 chmod +x install.sh
