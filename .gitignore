@@ -11,3 +11,6 @@ __pycache__/
 *.pth
 *.png
 log/
+test_log/
+list_patches/
+model_out20260730/

@@ -18,7 +18,7 @@ parser.add_argument('--list_dir', type=str,
                     default='./lists/lists_Synapse', help='list dir')
 parser.add_argument('--num_classes', type=int,
                     default=9, help='output channel of network')
-parser.add_argument('--output_dir', type=str, help='output dir')                   
+parser.add_argument('--output_dir', type=str, help='output dir')
 parser.add_argument('--max_iterations', type=int,
                     default=30000, help='maximum epoch number to train')
 parser.add_argument('--max_epochs', type=int,
@@ -26,9 +26,9 @@ parser.add_argument('--max_epochs', type=int,
 parser.add_argument('--batch_size', type=int,
                     default=24, help='batch_size per gpu')
 parser.add_argument('--n_gpu', type=int, default=1, help='total gpu')
-parser.add_argument('--deterministic', type=int,  default=1,
+parser.add_argument('--deterministic', type=int, default=1,
                     help='whether use deterministic training')
-parser.add_argument('--base_lr', type=float,  default=0.01,
+parser.add_argument('--base_lr', type=float, default=0.01,
                     help='segmentation network learning rate')
 parser.add_argument('--img_size', type=int,
                     default=224, help='input patch size of network input')
@@ -36,16 +36,16 @@ parser.add_argument('--seed', type=int,
                     default=1234, help='random seed')
 parser.add_argument('--cfg', type=str, required=True, metavar="FILE", help='path to config file', )
 parser.add_argument(
-        "--opts",
-        help="Modify config options by adding 'KEY VALUE' pairs. ",
-        default=None,
-        nargs='+',
-    )
+    "--opts",
+    help="Modify config options by adding 'KEY VALUE' pairs. ",
+    default=None,
+    nargs='+',
+)
 parser.add_argument('--zip', action='store_true', help='use zipped dataset instead of folder dataset')
 parser.add_argument('--cache-mode', type=str, default='part', choices=['no', 'full', 'part'],
                     help='no: no cache, '
-                            'full: cache all data, '
-                            'part: sharding the dataset into nonoverlapping pieces and only cache one piece')
+                         'full: cache all data, '
+                         'part: sharding the dataset into nonoverlapping pieces and only cache one piece')
 parser.add_argument('--resume', help='resume from checkpoint')
 parser.add_argument('--accumulation-steps', type=int, help="gradient accumulation steps")
 parser.add_argument('--use-checkpoint', action='store_true',
@@ -61,13 +61,12 @@ args = parser.parse_args()
 if args.dataset == "Synapse":
     args.root_path = os.path.join(args.root_path, "train_npz")
 if args.dataset == "Organoids":
-    args.root_path = os.path.join(args.root_path,"train")
+    args.root_path = os.path.join(args.root_path, "train")
 if args.dataset == "Living_died":
-    args.root_path = os.path.join(args.root_path,"train")
-if args.dataset == "Patches refinement":    
-    args.root_path = os.path.join(args.root_path,"train")
+    args.root_path = os.path.join(args.root_path, "train")
+if args.dataset == "Patches refinement":
+    args.root_path = os.path.join(args.root_path, "train")
 config = get_config(args)
-
 
 if __name__ == "__main__":
     if not args.deterministic:
@@ -121,7 +120,7 @@ if __name__ == "__main__":
         #     'num_classes': 3,
         #     # 'z_spacing': 1,
         # },
-        
+
         'Patches_refinement': {
             # 'Dataset': Synapse_dataset,
             # 'volume_path': args.volume_path,
@@ -131,8 +130,6 @@ if __name__ == "__main__":
             # 'z_spacing': 1,
         },
     }
-    
-    
 
     if args.batch_size != 24 and args.batch_size % 6 == 0:
         args.base_lr *= args.batch_size / 24
@@ -142,7 +139,7 @@ if __name__ == "__main__":
 
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
-    # net = ViT_seg(config, img_size=args.img_size, num_classes=args.num_classes).cuda()
+
     net = DoANet(
         config,
         img_size=args.img_size,
@@ -151,8 +148,6 @@ if __name__ == "__main__":
 
     net.load_from(config)
 
-    trainer = {'Patches_refinement':trainer_patches_refinement}
+    trainer = {'Patches_refinement': trainer_patches_refinement}
     trainer[dataset_name](args, net, args.output_dir)
-    
-    
-    
+

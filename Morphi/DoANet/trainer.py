@@ -24,10 +24,8 @@ from sklearn.model_selection import train_test_split
 from torch.utils.data import Subset
 
 
-
-
 class ResizePadGenerator:
-    def __init__(self, output_size = [224,224]):
+    def __init__(self, output_size=[224, 224]):
         self.target_size = output_size[0]
 
     def __call__(self, sample):
@@ -66,9 +64,6 @@ class ResizePadGenerator:
         return {'image': image, 'label': label}
 
 
-
-
-
 def generate_soft_weight_from_label(label_tensor):
     """
     label_tensor: [B, H, W] or [B, 1, H, W], label==2 is the dead zone
@@ -88,7 +83,6 @@ def generate_soft_weight_from_label(label_tensor):
         soft_weight[i, 0] = torch.tensor(dist_map)
 
     return soft_weight.cuda()
-
 
 
 def get_live_dead_soft_edge(label_batch, max_dist=5):
@@ -146,8 +140,7 @@ def get_live_dead_soft_edge(label_batch, max_dist=5):
     return torch.stack(soft_weights, dim=0).float()
 
 
-
-#cutmix
+# cutmix
 def rand_bbox(size, lam):
     """Randomly generate the coordinates of a rectangular box"""
     W = size[2]
@@ -170,8 +163,6 @@ def rand_bbox(size, lam):
 
 
 def trainer_patches_refinement(args, model, snapshot_path):
-
-
     logging.basicConfig(filename=snapshot_path + "/log.txt", level=logging.INFO,
                         format='[%(asctime)s.%(msecs)03d] %(message)s', datefmt='%H:%M:%S')
     logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
@@ -181,24 +172,20 @@ def trainer_patches_refinement(args, model, snapshot_path):
     num_classes = args.num_classes
     batch_size = args.batch_size * args.n_gpu
 
-    
-    #some geometric transformation
+    # some geometric transformation
     data_transforms = transforms.Compose([
         ResizePadGenerator(output_size=[args.img_size, args.img_size]),
-        transforms.RandomHorizontalFlip(p=0.5),   # 50% 概率水平翻转
-        transforms.RandomVerticalFlip(p=0.5),     # 50% 概率垂直翻转
-        transforms.RandomRotation(degrees=45),    # 随机旋转 -45到45度
-        # 加入色彩抖动
-        transforms.ColorJitter(brightness=0.1, contrast=0.1), 
+        transforms.RandomHorizontalFlip(p=0.5),  # 50% prob horizontal flip
+        transforms.RandomVerticalFlip(p=0.5),  # 50% prob vertical flip
+        transforms.RandomRotation(degrees=45),  # Rotate randomly from -45 to 45 degrees
+        # Add color jitter
+        transforms.ColorJitter(brightness=0.1, contrast=0.1),
         transforms.ToTensor(),
     ])
-    
+
     db_train = Synapse_dataset(base_dir=args.root_path, list_dir=args.list_dir, split="train",
                                transform=transforms.Compose([
                                    ResizePadGenerator(output_size=[args.img_size, args.img_size])]))
-    
-    
-    
 
     print("The length of train set is: {}".format(len(db_train)))
 
@@ -227,37 +214,36 @@ def trainer_patches_refinement(args, model, snapshot_path):
     iterator = tqdm(range(max_epoch), ncols=70)
 
     for epoch_num in iterator:
-        
-        # 只有前100个epoch加入cutmix
+
+        # Branches join cutmix only for the first 100 epochs
         cutmix_active = epoch_num < 100
-        
+
         for i_batch, sampled_batch in enumerate(trainloader):
             image_batch, label_batch = sampled_batch['image'], sampled_batch['label']
             image_batch, label_batch = image_batch.cuda(), label_batch.cuda()
-            
+
             # #z-score
             # mean = image_batch.mean()
             # std = image_batch.std()
             # image_batch = (image_batch-mean)/ (std+ 1e-8)
-            
-            
+
             """
             normal way
             """
-            # 输出 logits + death_prob(两个分支)
+            # output logits + death_prob(two branch)
             logits, death_prob = model(image_batch)
 
             # segmentation loss
             loss_ce = ce_loss(logits, label_batch.long())
             loss_dice = dice_loss(logits, label_batch, softmax=True)
 
-            # 边界 soft weight
-            soft_weight = generate_soft_weight_from_label(label_batch)  # 封装函数
+            # edge soft weight
+            soft_weight = generate_soft_weight_from_label(label_batch)
             loss_prob = F.mse_loss(death_prob, soft_weight)
 
-            # 死亡边界 binary loss
+            # death boundary binary loss
             with torch.no_grad():
-                boundary_mask = get_live_dead_soft_edge(label_batch).cuda()  
+                boundary_mask = get_live_dead_soft_edge(label_batch).cuda()
             prob = torch.softmax(logits, dim=1)
             onehot_label = F.one_hot(label_batch, num_classes=num_classes).permute(0, 3, 1, 2).float()
             loss_boundary = F.binary_cross_entropy(prob * boundary_mask, onehot_label * boundary_mask)
@@ -265,7 +251,7 @@ def trainer_patches_refinement(args, model, snapshot_path):
             loss = 0.4 * loss_ce + 0.6 * loss_dice + 0.1 * loss_boundary + 0.3 * loss_prob
 
             # loss = 0.4 * loss_ce + 0.6 * loss_dice
-            
+
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
@@ -289,9 +275,9 @@ def trainer_patches_refinement(args, model, snapshot_path):
                 writer.add_image('train/Prediction', pred_label[1, ...] * 50, iter_num)
                 labs = label_batch[1, ...].unsqueeze(0) * 50
                 writer.add_image('train/GroundTruth', labs, iter_num)
-                
+
                 # Add; with soft weight and death prob
-                writer.add_image('train/SoftWeight', soft_weight[1,...], iter_num)
+                writer.add_image('train/SoftWeight', soft_weight[1, ...], iter_num)
                 writer.add_image('train/DeathProb', death_prob[1, ...], iter_num)
 
         save_interval = 30

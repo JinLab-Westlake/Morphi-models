@@ -45,8 +45,8 @@ class PatchExpanding(nn.Module):
         self.dim = int(dim)
         self.dim_scale = int(dim_scale)
 
-        # Swin-Unet 的标准 PatchExpand:
-        # scale=2 时，输出通道从 C 降为 C/2。
+
+        # For scale=2, the output channel drops from C to C/2
         if self.dim % self.dim_scale != 0:
             raise ValueError(
                 f"dim={self.dim} must be divisible by "
@@ -55,7 +55,6 @@ class PatchExpanding(nn.Module):
 
         self.output_dim = self.dim // self.dim_scale
 
-        # PixelShuffle 要求输入通道数为:
         # output_dim * scale_factor^2
         expanded_dim = (
             self.output_dim
@@ -63,10 +62,8 @@ class PatchExpanding(nn.Module):
             * self.dim_scale
         )
 
-        # scale=2 时:
+
         # expanded_dim = C/2 * 4 = 2C
-        #
-        # 与原始实现 nn.Linear(C, 2*C) 完全一致。
         self.expand = nn.Linear(
             self.dim,
             expanded_dim,
@@ -110,13 +107,9 @@ class PatchExpanding(nn.Module):
                 f"Channel mismatch: expected {self.dim}, got {C}."
             )
 
-        # [B, H*W, C]
-        # -> [B, H*W, output_dim * scale^2]
         x = self.expand(x)
 
-        # Token -> feature map
-        # [B, H*W, C_expanded]
-        # -> [B, C_expanded, H, W]
+        # Token -> feature map [B, H*W, C_expanded] -> [B, C_expanded, H, W]
         x = x.transpose(1, 2).contiguous()
         x = x.view(
             B,
@@ -125,17 +118,13 @@ class PatchExpanding(nn.Module):
             W,
         )
 
-        # PixelShuffle:
-        # [B, output_dim*scale^2, H, W]
-        # -> [B, output_dim, H*scale, W*scale]
+        # PixelShuffle: [B, output_dim*scale^2, H, W] -> [B, output_dim, H*scale, W*scale]
         x = self.pixel_shuffle(x)
 
         H_out = H * self.dim_scale
         W_out = W * self.dim_scale
 
-        # Feature map -> token
-        # [B, output_dim, H_out, W_out]
-        # -> [B, H_out*W_out, output_dim]
+        # Feature map -> token [B, output_dim, H_out, W_out] -> [B, H_out*W_out, output_dim]
         x = x.flatten(2).transpose(1, 2).contiguous()
 
         expected_shape = (
@@ -181,7 +170,7 @@ class finalExpand_featuremap(nn.Module):
         self.dim_scale = dim_scale
         self.out_dim = out_dim or dim
 
-        # 每个 token 展开成 dim_scale × dim_scale 个空间位置
+        # dim_scale × dim_scale
         self.expand = nn.Linear(
             dim,
             (dim_scale ** 2) * self.out_dim,
@@ -221,7 +210,7 @@ class finalExpand_featuremap(nn.Module):
             (self.dim_scale ** 2) * self.out_dim,
         )
 
-        # PixelShuffle 式空间重排
+        # Pixelshuffle-style spatial rearrangement
         # -> [B, H*scale, W*scale, out_dim]
         x = rearrange(
             x,
@@ -238,65 +227,6 @@ class finalExpand_featuremap(nn.Module):
 
         return x
     
-# #add
-# class BasicLayer_up(nn.Module):
-#     """ A basic Swin Transformer layer for one stage.
-
-#     Args:
-#         dim (int): Number of input channels.
-#         input_resolution (tuple[int]): Input resolution.
-#         depth (int): Number of blocks.
-#         num_heads (int): Number of attention heads.
-#         window_size (int): Local window size.
-#         mlp_ratio (float): Ratio of mlp hidden dim to embedding dim.
-#         qkv_bias (bool, optional): If True, add a learnable bias to query, key, value. Default: True
-#         qk_scale (float | None, optional): Override default qk scale of head_dim ** -0.5 if set.
-#         drop (float, optional): Dropout rate. Default: 0.0
-#         attn_drop (float, optional): Attention dropout rate. Default: 0.0
-#         drop_path (float | tuple[float], optional): Stochastic depth rate. Default: 0.0
-#         norm_layer (nn.Module, optional): Normalization layer. Default: nn.LayerNorm
-#         upsample (nn.Module | None, optional): upsample layer at the end of the layer. Default: None
-#         use_checkpoint (bool): Whether to use checkpointing to save memory. Default: False.
-#     """
-
-#     def __init__(self, dim, input_resolution, depth, num_heads, window_size,
-#                  mlp_ratio=4., qkv_bias=True, qk_scale=None, drop=0., attn_drop=0.,
-#                  drop_path=0., norm_layer=nn.LayerNorm, upsample=None, use_checkpoint=False):
-
-#         super().__init__()
-#         self.dim = dim
-#         self.input_resolution = input_resolution
-#         self.depth = depth
-#         self.use_checkpoint = use_checkpoint
-
-#         # build blocks
-#         self.blocks = nn.ModuleList([
-#             SwinTransformerBlock(dim=dim, input_resolution=input_resolution,
-#                                  num_heads=num_heads, window_size=window_size,
-#                                  shift_size=0 if (i % 2 == 0) else window_size // 2,
-#                                  mlp_ratio=mlp_ratio,
-#                                  qkv_bias=qkv_bias, qk_scale=qk_scale,
-#                                  drop=drop, attn_drop=attn_drop,
-#                                  drop_path=drop_path[i] if isinstance(drop_path, list) else drop_path,
-#                                  norm_layer=norm_layer)
-#             for i in range(depth)])
-
-#         # patch merging layer
-#         if upsample is not None:
-#             self.upsample = PatchExpand(input_resolution, dim=dim, dim_scale=2, norm_layer=norm_layer)
-#         else:
-#             self.upsample = None
-
-#     def forward(self, x):
-#         for blk in self.blocks:
-#             if self.use_checkpoint:
-#                 x = checkpoint.checkpoint(blk, x)
-#             else:
-#                 x = blk(x)
-#         if self.upsample is not None:
-#             x = self.upsample(x)
-#         return x
-
 
 
 class BasicLayer_decoder(nn.Module):

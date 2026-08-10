@@ -1,14 +1,15 @@
-import numpy as np
 from sklearn.metrics import jaccard_score,precision_score,recall_score,f1_score
-import torch
 from medpy import metric
-from scipy.ndimage import zoom
 import torch.nn as nn
-import SimpleITK as sitk
 import cv2
 from PIL import Image
-
-
+import pandas as pd
+from scipy.ndimage import label, find_objects
+import torch
+from scipy.ndimage import zoom
+import os
+import numpy as np
+from skimage.transform import resize
 
 
 class DiceLoss(nn.Module):
@@ -90,8 +91,6 @@ class MultiTaskSegmentationHead(nn.Module):
 
 
 
-
-
 def calculate_metric_percase(pred, gt):
     # pred[pred > 0] = 1
     # gt[gt > 0] = 1
@@ -113,8 +112,6 @@ def calculate_metric_percase(pred, gt):
         return 1, 0,0,0,1,0
     else:
         return 0, 0,0,0,0,0
-
-
 
 
 
@@ -160,11 +157,7 @@ def draw_and_save_boxes(image, target_boundaries, save_path, case, suffix):
     # Set color and thickness for the boxes
     box_color = (0, 255, 0)  # Green
     box_thickness = 1
-    
-    # 检查 target_boundaries 的内容和格式
-    # print("target_boundaries:", target_boundaries)
-    # for boundary in target_boundaries:
-    #     print(type(boundary), boundary)  # 打印每个边界的类型和内容
+
     
     # Draw each boundary box on the image
     for boundary in target_boundaries:
@@ -190,37 +183,26 @@ def draw_and_save_boxes(image, target_boundaries, save_path, case, suffix):
     cv2.imwrite(output_file, image)
 
 
-
-
-# 改resize为填充
-
-import numpy as np
-from skimage.transform import resize
-
-import numpy as np
-from skimage.transform import resize
-
 def resize_and_pad_to_patch(image, patch_size, pad_mode='constant', pad_val=0):
     """
-    图像根据 patch size 调整：
-    - 如果最长边 ≤ patch_size，保持原比例直接 padding；
-    - 如果最长边 > patch_size，先缩放最长边到 patch_size，再 padding。
+    The image is resized according to the patch size:
+    - If the longest edge ≤ patch_size, keep the original proportion and directly padding;
+    -If longest edge > patch_size, first scale longest edge to patch_size and then padding.
 
     Args:
-        image: 2D numpy array, 原图
-        patch_size: (H, W)，目标尺寸
-        pad_mode: np.pad 的模式（默认 constant）
-        pad_val: 填充值（默认 0）
+    image: 2D numpy array, original image
+    patch_size: (H, W), the target size
+    pad_mode: Mode for np.pad (default constant)
+    pad_val: Fill value (default 0)
 
     Returns:
-        resized_padded_image: 最终尺寸为 patch_size 的图像
+    resized_padded_image: Image with final size patch_size
     """
     orig_h, orig_w = image.shape
     target_h, target_w = patch_size
 
-    # 判断是否需要缩放
+    # Determine if resizing is necessary
     if orig_h <= target_h and orig_w <= target_w:
-        # 直接 padding 到目标大小
         pad_h = target_h - orig_h
         pad_w = target_w - orig_w
         pad_top    = pad_h // 2
@@ -235,7 +217,6 @@ def resize_and_pad_to_patch(image, patch_size, pad_mode='constant', pad_val=0):
         return padded
     
     else:
-        # 需要先缩放，再 padding
         scale_h = target_h / orig_h
         scale_w = target_w / orig_w
         scale = min(scale_h, scale_w)
@@ -261,40 +242,27 @@ def resize_and_pad_to_patch(image, patch_size, pad_mode='constant', pad_val=0):
 
 
 
-
-import pandas as pd
-from scipy.ndimage import label, find_objects
-import torch
-from scipy.ndimage import zoom
-import os
-
 def inference_single_volum_whole(image, ground_truth, net, classes, patch_size=[256, 256], test_save_path=None, case=None):
-    # 将图像和标签转换为 NumPy 数组，并确保是二维的
+    # Convert the images and labels to NumPy arrays and make sure they are two-dimensional
     image = image.squeeze(0).squeeze(0).cpu().detach().numpy()
     # label = label.squeeze(0).cpu().detach().numpy()
 
-    # 获取图像的大小
+    # get size of image
     x, y = image.shape[0], image.shape[1]
 
-    # 如果图像大小与 patch_size 不匹配，调整图像大小
+    # If the image size does not match the patch_size, resize the image
     if x != patch_size[0] or y != patch_size[1]:
-        # 确保输入的 zoom 比例与图像维度一致
         image = zoom(image, (patch_size[0] / x, patch_size[1] / y), order=3)
         # image = resize_and_pad_to_patch(image, patch_size)
         print(image.shape)
 
-    # 将图像转换为 Tensor
+    # transfer image into Tensor
     input_tensor = torch.from_numpy(image).unsqueeze(0).unsqueeze(0).float().cuda()
     net.eval()
 
-    # 推理
+    # inference
     with torch.no_grad():
-        # outputs = net(input_tensor)
-        # out = torch.argmax(torch.softmax(outputs, dim=1), dim=1).squeeze(0)
-        
-        # outputs = outputs[0] if isinstance(outputs, tuple) else outputs
         outputs = net(input_tensor)
-        # 如果输出是 tuple，例如 (logits, aux), 只取 logits
         outputs = outputs[0] if isinstance(outputs, tuple) else outputs
         out = torch.argmax(torch.softmax(outputs, dim=1), dim=1).squeeze(0)
 
@@ -303,14 +271,14 @@ def inference_single_volum_whole(image, ground_truth, net, classes, patch_size=[
         
         prediction = out.cpu().detach().numpy()
 
-        # 如果图像进行了缩放，则恢复到原始大小
+        # what if resize the data, transform it to original size
         if x != patch_size[0] or y != patch_size[1]:
             prediction = zoom(prediction, (x / patch_size[0], y / patch_size[1]), order=0)
 
     # record the edge box of each object
     target_boundaries = []
     
-    # 保存用于Excel的数据
+    # excel
     excel_data = []
     
     # record the object area (connective area)
@@ -323,21 +291,21 @@ def inference_single_volum_whole(image, ground_truth, net, classes, patch_size=[
             top, down = obj[0].start, obj[0].stop - 1
             left, right = obj[1].start, obj[1].stop - 1
             
-            #---------------------
+
             # what if the size if too small to be a noise; then need to be removed
             if (down-top)*(right-left) > 32*32:
             
-                # 缩放边界框坐标到 patch_size
+                # Scale the bounding box coordinates to patch_size
                 scale_x = patch_size[0] / x
                 scale_y = patch_size[1] / y
                 top_scaled, down_scaled = int(top * scale_x), int(down * scale_x)
                 left_scaled, right_scaled = int(left * scale_y), int(right * scale_y)
                 
-                # 计算中心点坐标
+                # calculate center
                 central_x = (left_scaled + right_scaled) // 2
                 central_y = (top_scaled + down_scaled) // 2
 
-                # 记录目标边界和中心点信息
+                # The object boundary and center point information were recorded
                 target_boundaries.append({
                     'target_index': i,
                     'top': top_scaled,
@@ -348,7 +316,7 @@ def inference_single_volum_whole(image, ground_truth, net, classes, patch_size=[
                     'central_y': central_y
                 })
 
-                # 添加到Excel数据
+                # Add to Excel data
                 excel_data.append({
                     'imagename': case,
                     'target_index': i,
@@ -364,16 +332,16 @@ def inference_single_volum_whole(image, ground_truth, net, classes, patch_size=[
                 continue
             
             
-    # 如果需要保存推理结果
+    # Save the inference results if needed
     if test_save_path is not None:
         save_as_original_png(image, test_save_path, case, "img")
         save_as_gray_png(prediction, test_save_path, case, "pred", 3)
     
     if test_save_path is not None:
-        os.makedirs(test_save_path, exist_ok=True)  # 确保保存目录存在
+        os.makedirs(test_save_path, exist_ok=True)  # Make sure the save directory exists
         excel_save_path = os.path.join(test_save_path, f"{case}_results.xlsx")
         
-        # 将推理的图像和边界框结果保存
+        # The inferred image and bounding box results are saved
         draw_and_save_boxes(image, target_boundaries, test_save_path, case, 'labeled_box')
 
 
@@ -456,8 +424,6 @@ def inference_single_volum_patches(image, ground_truth, net, classes, patch_size
     if test_save_path is not None:
         save_as_original_png(image, test_save_path, case, "img")
         save_as_gray_png(prediction, test_save_path, case, "pred", 3)
-
-
 
 
 
