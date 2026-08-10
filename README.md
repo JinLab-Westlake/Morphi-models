@@ -25,7 +25,7 @@
   <li><strong>DoANet</strong>: semantic segmentation of live/dead regions.</li>
   <li><strong>Instance segmentation</strong>: organoid detection and segmentation using Detectron2.</li>
   <li><strong>Death-rate analysis</strong>: combines semantic and instance masks to calculate the death rate of each organoid.</li>
-  <li><strong>Feature extraction</strong>: morphological and texture features are extracted.</li>
+  <li><strong>Feature extraction</strong>: instance-level morphological and texture features are extracted.</li>
 </ul>
 
 <pre><code>Morphi/
