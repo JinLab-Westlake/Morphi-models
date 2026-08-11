@@ -15,9 +15,9 @@ CELL_SEG_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
 # need input image and checkpoint
 IMAGE_PATH="$1"
-
-
 [ $# -eq 1 ] || { echo "Usage: $0  <image> <checkpoint>"; exit 1; }
+
+
 # ============================================================
 # Project roots
 # ============================================================
