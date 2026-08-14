@@ -29,11 +29,11 @@
 </ul>
 
 <pre><code>Morphi/
-├── Z-stack_projection/  # multi-layer projection
-├── Edge-detection/      # fluorescence detection
-├── DoANet/              # viability analysis
-├── Instance-segment/    # organoid instance segmentation
-└── scripts/             # pipeline and mask conversion
+├── Z-stack_projection/     # multi-layer projection
+├── Edge-detection/         # fluorescence detection
+├── DoANet/                 # viability analysis
+└── Instance-segment/       # organoid instance segmentation
+    └── Feature_analysis/   # feature extraction and cluster
 </code></pre>
 
 
