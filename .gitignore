@@ -9,7 +9,7 @@ __pycache__/
 .DS_Store
 *.onnx
 *.pth
-*.png
+#*.png
 log/
 test_log/
 list_patches/

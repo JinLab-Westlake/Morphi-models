@@ -118,9 +118,10 @@ The death-rate table example:
 
 <table>
 <tr><th>image_name</th><th>instance_id</th><th>instance_area</th><th>dead_pixels</th><th>death_rate</th></tr>
-<tr><td>Image.tiff</td><td>1</td><td>10572</td><td>27</td><td>0.25</td></tr>
-<tr><td>Image.tiff</td><td>2</td><td>2050</td><td>2015</td><td>97.29</td></tr>
-<tr><td>Image.tiff</td><td>3</td><td>3654</td><td>291</td><td>7.96</td></tr>
+<tr><td>Image.tiff</td><td>1</td><td>6905</td><td>5955</td><td>86.73</td></tr>
+<tr><td>Image.tiff</td><td>2</td><td>1811</td><td>1811</td><td>100</td></tr>
+<tr><td>Image.tiff</td><td>3</td><td>2481</td><td>2481</td><td>100</td></tr>
+<tr><td>Image.tiff</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>
 </table>
 
 
