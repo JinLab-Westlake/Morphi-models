@@ -100,11 +100,11 @@ semantic mask.
 <table align="center">
   <tr>
     <td align="center">
-      <img src="docs/pic/exp_orig.tiff" width="400"><br>
+      <img src="docs/pic/exp_orig.png" width="400"><br>
       <b>Input</b>
     </td>
     <td align="center">
-      <img src="docs/pic/exp_res.tiff" width="400"><br>
+      <img src="docs/pic/exp_res.png" width="400"><br>
       <b>Output</b>
     </td>
   </tr>
