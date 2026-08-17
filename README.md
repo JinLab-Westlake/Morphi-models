@@ -15,10 +15,6 @@
 </p>
 
 
-[//]: # (  <img src="https://img.shields.io/badge/License-MIT-green" alt="License">)
-
-
-
 <h2>Overview</h2>
 
 <ul>
@@ -100,6 +96,19 @@ semantic mask.
         │   └── example.png
         └── instance_death_rate.xlsx
 </code></pre>
+
+<table align="center">
+  <tr>
+    <td align="center">
+      <img src="docs/pic/exp_orig.tiff" width="400"><br>
+      <b>Input</b>
+    </td>
+    <td align="center">
+      <img src="docs/pic/exp_res.tiff" width="400"><br>
+      <b>Output</b>
+    </td>
+  </tr>
+</table>
 
 
 <p>
