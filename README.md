@@ -168,8 +168,8 @@ The Detectron2 source used for the experiments is bundled in
 
 <h2>Citation</h2>
 
-<pre><code>&lt;INSERT CITATION AFTER PUBLICATION&gt;</code></pre>
+<pre><code></code></pre>
 
 <h2>License</h2>
 
-<p>&lt;INSERT LICENSE&gt;</p>
+<p></p>
