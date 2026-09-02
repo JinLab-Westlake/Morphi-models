@@ -144,6 +144,7 @@ Usage:
 </pre>
 
 
+
 <h2>Run DoANet Only</h2>
 <pre><code>python DoANet/inference_full_image.py \
     --image_path &lt;INPUT_IMAGE&gt; \
