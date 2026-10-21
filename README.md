@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <strong>Official implementation of “AI-driven phenotypic profiling of organoids in droplet culture”</strong>
+  <strong>Official implementation of “AI-driven phenotypic profiling of organoids”</strong>
 </p>
 
 
